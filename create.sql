@@ -3,23 +3,24 @@ DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS CategoryOf;
 DROP TABLE IF EXISTS Category;
 DROP TABLE IF EXISTS Bids;
+DROP TABLE IF EXISTS CurrentTime;
 
 CREATE TABLE Items(
   ItemID INT PRIMARY KEY,
-  SellerID INT,
+  SellerID VARCHAR(50),
   Name VARCHAR(50),
   Buy_Price FLOAT,
   First_Bid FLOAT,
   Currently FLOAT,
   Number_of_Bids INT,
-  Started TIME,
-  Ends TIME,
+  Started DATETIME,
+  Ends DATETIME CHECK(Ends>Started),
   Description VARCHAR(10000),
   FOREIGN KEY(SellerID) REFERENCES Users
 );
 
 CREATE TABLE Users(
-  UserID INT PRIMARY KEY,
+  UserID VARCHAR(50) PRIMARY KEY,
   Rating FLOAT,
   Location VARCHAR(80),
   Country VARCHAR(50)
@@ -39,10 +40,19 @@ CREATE TABLE Category(
 
 CREATE TABLE Bids(
   ItemID INT,
-  UserID INT,
+  UserID VARCHAR(50),
   Time TIME,
   Amount FLOAT,
+  UNIQUE(ItemID, Time),
+  UNIQUE(UserID, Amount, Time),
   PRIMARY KEY(ItemID, UserID, Time),
   FOREIGN KEY(ItemID) REFERENCES Items,
   FOREIGN KEY(UserID) REFERENCES Users
 );
+
+CREATE TABLE CurrentTime(
+	currentTime DATETIME PRIMARY KEY
+);
+
+INSERT into CurrentTime VALUES ('2001-12-20 00:00:01');
+SELECT * FROM CurrentTime;

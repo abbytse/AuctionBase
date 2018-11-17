@@ -1,0 +1,48 @@
+1. No two items can share the same User ID.
+Appended PRIMARY KEY to UserID in table Users.
+
+2. All sellers and bidders must already exists as users.
+Appended FOREIGN KEY(SellerID) REFERENCES Users to table Items.
+Appended FOREIGN KEY(UserID) REFERENCES Users to able Bids.
+
+3. No two items can share the same Item ID.
+Appended PRIMARY KEY to ItemID in table Items.
+
+4. Every bid must correspond to an actual item.
+Appended FOREIGN KEY(ItemID) REFERENCES Items to table Bids.
+
+5. The items for a given category must all exist.
+Appended FOREIGN KEY(ItemID) REFERENCE Items to table CategoryOf.
+
+6. An item cannot belong to a particular category more than once.
+Appended PRIMARY KEY(ItemID, Category) to table CategoryOf.
+
+7. The end time for an auction must always be after its start time.
+Appended CHECK(Ends>Started) to attribute Ends in table Items.
+
+8. The [Current Price] of an item must always match the Amount of the most recent bid for that item.
+*trigger1
+
+9. A user may not bid on an item he or she is also selling.
+*trigger2
+
+10. No auction may have two bids at the exact same time.
+Appended UNIQUE(ItemID, Time) to table Bids.
+
+11. No auction may have a bid before its start time or after its end time.
+*trigger3
+
+12. No user can make a bid of the same amount to the same item more than once.
+Appended UNIQUE(UserID, Amount) to table Bids.
+
+13. In every auction, the Number of Bids attribute corresponds to the actual number of bids for that particular item.
+*trigger4
+
+14. Any new bid for a particular item must have a higher amount than any of the previous bids for that particular item.
+*trigger5
+
+15. All new bids must be placed at the time which matches the current time of your AuctionBase system.
+*trigger6
+
+16. The current time of your AuctionBase system can only advance forward in time, not backward in time.
+*trigger7
