@@ -1,2 +1,2 @@
 PRAGMA foreign_keys = ON;
-DROP TRIGGER IF EXISTS forward_time;
+DROP TRIGGER IF EXISTS time_flow;

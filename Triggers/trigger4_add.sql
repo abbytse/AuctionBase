@@ -2,6 +2,8 @@
 PRAGMA foreign_keys = ON;
 DROP TRIGGER IF EXISTS number_of_bids;
 
+--Update the number_of_bids to correspond to the correct number of bids 
+--by adding 1 bid after each insert in bids 
 CREATE TRIGGER number_of_bids
 AFTER INSERT ON Bids
 FOR EACH ROW
