@@ -5,7 +5,7 @@ rm category.dat
 rm users.dat
 rm bids.dat
 
-python skeleton_parser.py ./ebay_data/items-*.json
+python zat_parser.py ./ebay_data/items-*.json
 
 sort -k1 -u -o items.dat items.dat
 sort -k1 -u -o categoryOf.dat category.dat

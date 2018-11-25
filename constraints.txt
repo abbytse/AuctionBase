@@ -46,3 +46,6 @@ Appended UNIQUE(UserID, Amount) to table Bids.
 
 16. The current time of your AuctionBase system can only advance forward in time, not backward in time.
 *trigger7
+
+Note: Key constraint, referential integrity constraints and check constraints are implementated in create.sql 
+All the triggers are in the triggers folder.
