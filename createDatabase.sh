@@ -20,3 +20,5 @@ echo "Running trigger6_add.sql..."
 sqlite3 auction.db < ./Triggers/trigger6_add.sql
 echo "Running trigger7_add.sql..."
 sqlite3 auction.db < ./Triggers/trigger7_add.sql
+echo "Running createStatus.py..."
+python createStatus.py
