@@ -1,1 +1,1 @@
-SELECT COUNT(USERID) FROM Users WHERE Location = "New York");
+SELECT COUNT(USERID) FROM Users WHERE Location = "New York";
