@@ -1,4 +1,5 @@
 #!/usr/bin/python
+#test case: python clInterface.py search ItemID=1043374545
 
 import sys
 import sqlite3
@@ -13,26 +14,44 @@ def create_connection(db_file):
 
     return None
 
-def select_all(conn):
+def split():
+    argument = []
+    i = 2
+    for x in sys.argv[2:]:
+        text = sys.argv[i].split("=")
+        argument.append(text[0])
+        argument.append(text[1])
+        i+=1
+    return argument
+
+def search(conn,argument):
     cur = conn.cursor()
-    cur.execute("SELECT * FROM Bids WHERE ItemID = 1043402767")
+    i = 0
+    arguments = ""
+    for x in argument:
+        arguments+=str(x) + " "
+        if(i == (len(argument)-1)):
+            break
+        elif(i%2 == 0):
+            arguments+=str("= ")
+        elif(i%2 != 0):
+            arguments+=str(" AND ")
+        i+=1
+    cur.execute("SELECT * FROM Items WHERE %s" % (arguments,))
 
     rows = cur.fetchall()
 
     for row in rows:
         print(row)
 
-def split():
-    argument = []
-    for x in sys.argv[1:]:
-        argument.append(x.split("="))
-    # text = sys.argv[1:].split("=")
-    print(argument)
+def buy():
 
-#DISREGARD UNTIL FURTHER TESTING
-# def select(conn):
-#     cur = conn.cursor()
-#     cur.execute("SELECT * FROM Bids WHERE %s = %s")
+    return None
+
+def bid():
+
+    return None
+
 
 def main():
     database = "auction.db"
@@ -40,10 +59,15 @@ def main():
     #create a database connection
     conn = create_connection(database)
     with conn:
-        print("1.Select one row")
-        select_all(conn)
-        print("\nArgument List:", str(sys.argv[1:]))
-        split()
+        argument = split()
+        function = sys.argv[1]
+        if function == "search":
+            print("\nSearching...")
+            search(conn,argument)
+        elif function == "buy":
+            None
+        elif function == "bid":
+            None
 
 if __name__ == "__main__":
     main()
