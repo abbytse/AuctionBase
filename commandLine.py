@@ -1,6 +1,8 @@
 #!/usr/bin/python
-#test case: python commandLine.py search ItemID=1043374545
-#test case: python commandLine.py bid itemID=1679480995 userID=007cowboy price=1009
+#search test case: python commandLine.py search ItemID=1043374545
+#bid test case: python commandLine.py bid itemID=1679480995 userID=007cowboy price=1009
+#bid == buy_price test case: python commandLine.py bid itemID=1679391688 userID=007cowboy price=11.53
+#buy test case: python commandLine.py buy itemID=1679386982 userID=1philster
 
 import sys
 import sqlite3
@@ -63,16 +65,39 @@ def search(conn,argument):
 
     for row in rows:
         print(row)
+        if(sys.argv[1] == "buy"):
+            return row
 
 
-# def buy(conn,argument):
-#     cur = conn.cursor()
-#     cur.execute("INSERT
-#
-    rows = cur.fetchall()
+def buy(conn,argument):
+    i = 0
+    userID = []
+    # itemID = []
+    while i < len(argument):
+        if(argument[i] == 'UserID'):
+            userID.append(argument[i])
+            userID.append(argument[i+1])
+            del argument[i]
+            del argument[i]
+        # elif(argument[i] == 'ItemID'):
+        #     itemID.append(argument[i])
+        i += 1
 
-    for row in rows:
-        print(row)
+    #search for ItemID
+    print('Seaching for item identification number...')
+    row = search(conn,argument)
+
+    #place bid that links both Bids and Items table
+    argument.append(userID[0])
+    argument.append(userID[1])
+    argument.append("Amount")
+    argument.append(row[3])
+    print('Entering bid...')
+    bid(conn,argument)
+
+    # cur.execute("UPDATE Items SET Open = false WHERE Currently < Buy_Price OR Buy_Price IS NULL")
+    # sql = "INSERT INTO Bids (" + attribute + ") VALUES (" + values + ")"
+    # sql = "UPDATE Items SET Open = false WHERE Currently < Buy_Price OR Buy_Price IS NULL"
 
 
 def bid(conn,argument):
@@ -107,6 +132,8 @@ def bid(conn,argument):
 
     cur = conn.cursor()
     cur.execute(sql)
+    print("Succesfully Bid!")
+    print("Searching for Bid...")
     cur.execute("SELECT * FROM Bids WHERE UserID=%s" % (user,))
 
     rows = cur.fetchall()
@@ -127,8 +154,9 @@ def main():
             print("\nSearching...")
             search(conn,argument)
         elif function == "buy":
-            None
+            buy(conn,argument)
         elif function == "bid":
+            print("\nBidding...")
             bid(conn,argument)
 
 if __name__ == "__main__":
