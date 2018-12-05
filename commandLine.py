@@ -3,6 +3,7 @@
 #bid test case: python commandLine.py bid itemID=1679480995 userID=007cowboy price=1009
 #bid == buy_price test case: python commandLine.py bid itemID=1679391688 userID=007cowboy price=11.53
 #buy test case: python commandLine.py buy itemID=1679386982 userID=1philster
+#buy test case: python commandLine.py buy itemID=1679386982 userID=007cowboy
 
 import sys
 import sqlite3
@@ -65,22 +66,23 @@ def search(conn,argument):
 
     for row in rows:
         print(row)
-        if(sys.argv[1] == "buy"):
+        if(sys.argv[1] != "search"):
             return row
 
 
 def buy(conn,argument):
     i = 0
     userID = []
-    # itemID = []
+    itemID = []
     while i < len(argument):
         if(argument[i] == 'UserID'):
             userID.append(argument[i])
             userID.append(argument[i+1])
             del argument[i]
             del argument[i]
-        # elif(argument[i] == 'ItemID'):
-        #     itemID.append(argument[i])
+        elif(argument[i] == 'ItemID'):
+            itemID.append(argument[i])
+            itemID.append(argument[i+1])
         i += 1
 
     #search for ItemID
@@ -88,6 +90,9 @@ def buy(conn,argument):
     row = search(conn,argument)
 
     #place bid that links both Bids and Items table
+    status = row[10]
+    if status == 0:
+        raise Exception("Bid of Item is Closed!")
     argument.append(userID[0])
     argument.append(userID[1])
     argument.append("Amount")
@@ -95,9 +100,9 @@ def buy(conn,argument):
     print('Entering bid...')
     bid(conn,argument)
 
-    # cur.execute("UPDATE Items SET Open = false WHERE Currently < Buy_Price OR Buy_Price IS NULL")
-    # sql = "INSERT INTO Bids (" + attribute + ") VALUES (" + values + ")"
-    # sql = "UPDATE Items SET Open = false WHERE Currently < Buy_Price OR Buy_Price IS NULL"
+    sql = "UPDATE Items SET Open = false WHERE " + itemID[0] + "=" + itemID[1]
+    cur = conn.cursor()
+    cur.execute(sql)
 
 
 def bid(conn,argument):
