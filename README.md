@@ -3,7 +3,7 @@ Database management project that bulk loads historic eBay data in JSON format in
 
 Technologies and tools used: **Python**, **SQLite**, **Shell Scripting**
 
-Author: Zachary Dulac, Trung Nguyen, Abby Tse
+Authors: Zachary Dulac, Trung Nguyen, Abby Tse
 *****
 
 ##### Part 1.A: Design relational schema
