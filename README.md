@@ -1,5 +1,4 @@
 # AuctionBase
-*****
 Database management project that bulk loads historic eBay data in JSON format into a SQLite Database via a python parser. Searches, bids, and purchases are made using commandLine.py, which takes command line arguments and converts those into a query in the SQlite Database. Triggers were implemented to avoid collisions or invalid data entries.
 
 Technologies and tools used: **Python**, **SQLite**, **Shell Scripting*
