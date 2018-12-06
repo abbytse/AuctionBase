@@ -1,5 +1,7 @@
 #!/usr/bin/python
-#search test case: python commandLine.py search ItemID=1043374545
+#search test case: python commandLine.py search itemID=1043374545
+#search test case: python commandLine.py search description=paypal
+#join test case: python commandLine.py search itemID=1043374545 category=Decorative
 #bid test case: python commandLine.py bid itemID=1679480995 userID=007cowboy price=1009
 #bid == buy_price test case: python commandLine.py bid itemID=1679391688 userID=007cowboy price=11.53
 #buy test case: python commandLine.py buy itemID=1679386982 userID=1philster
@@ -49,8 +51,13 @@ def split():
 def search(conn,argument):
     i = 0
     arguments = ""
+    print(argument)
     for x in argument:
-        arguments+=str(x) + " "
+        if(x == 'Description'):
+            arguments+= argument[i] + " like \'%" + argument[i+1] + "%\'"
+            i+=1
+        else:
+            arguments+=str(x) + " "
         if(i == (len(argument)-1)):
             break
         elif(i%2 == 0):
@@ -59,8 +66,40 @@ def search(conn,argument):
             arguments+=str(" AND ")
         i+=1
 
+    print(arguments)
     cur = conn.cursor()
     cur.execute("SELECT * FROM Items WHERE %s" % (arguments,))
+
+    rows = cur.fetchall()
+
+    for row in rows:
+        print(row)
+        if(sys.argv[1] != "search"):
+            return row
+
+def join(conn,argument):
+    print(len(argument))
+    arguments = ""
+    i = 0
+    while i < len(argument):
+        if(argument[i] == 'Category'):
+            temp = 'C.'
+            arguments+= str(temp) + argument[i] + " like \'%" + argument[i+1] + "%\'"
+        elif(argument[i] == 'Description'):
+            temp = 'I.'
+            arguments+= str(temp) + argument[i] + " like \'%" + argument[i+1] + "%\'"
+        else:
+            temp = 'I.'
+            arguments+= str(temp) + argument[i] + "=" + argument[i+1]
+        if((i+2) == len(argument)):
+            break
+        else:
+            arguments+= " AND "
+        i += 2
+    print(arguments)
+    sql = "SELECT * FROM Items I, CategoryOf C WHERE I.ItemID = C.ItemID AND " + str(arguments)
+    cur = conn.cursor()
+    cur.execute(sql)
 
     rows = cur.fetchall()
 
@@ -103,6 +142,7 @@ def buy(conn,argument):
     sql = "UPDATE Items SET Open = false WHERE " + itemID[0] + "=" + itemID[1]
     cur = conn.cursor()
     cur.execute(sql)
+    print("Item has been bought!")
 
 
 def bid(conn,argument):
@@ -153,11 +193,19 @@ def main():
     #create a database connection
     conn = create_connection(database)
     with conn:
+        joinB = False;
         argument = split()
         function = sys.argv[1]
+
         if function == "search":
+            for x in argument:
+                if x == 'Category':
+                    joinB = True;
             print("\nSearching...")
-            search(conn,argument)
+            if(joinB):
+                join(conn,argument)
+            else:
+                search(conn,argument)
         elif function == "buy":
             buy(conn,argument)
         elif function == "bid":
