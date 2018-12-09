@@ -1,9 +1,11 @@
 #!/usr/bin/python
+#python script to add the open/closed status to the database 
 
 import sys
 import sqlite3
 from sqlite3 import Error
 
+#opens connection to database file
 def create_connection(db_file):
     try:
         conn = sqlite3.connect(db_file)
@@ -13,6 +15,10 @@ def create_connection(db_file):
 
     return None
 
+#defines what an open and closed status means 
+#based on currently and buy_price
+#if currently matches or exceeds buy_price, the auction is closed
+#if currently is less than buy_price or the buy_price is Null, the auction is opened 
 def status(conn):
     cur = conn.cursor()
     cur.execute("ALTER TABLE Items ADD COLUMN Open VARCHAR(50)")
@@ -21,8 +27,7 @@ def status(conn):
 
     return None
 
-
-
+#main to implement the updates status 
 def main():
     database = "auction.db"
 
