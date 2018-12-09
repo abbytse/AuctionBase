@@ -1,3 +1,8 @@
+#Trung Nguyen, Abby Tse, Zack Dulac
+#python program to read in the arguments from CLI 
+#processes arguments, runs SQL command 
+#and returns matching tuples
+
 #!/usr/bin/python
 #search test case: python commandLine.py search itemID=1043374545
 #search test case: python commandLine.py search description=paypal
@@ -13,6 +18,7 @@ from sqlite3 import Error
 import datetime
 from datetime import datetime
 
+#connect to database file
 def create_connection(db_file):
     try:
         conn = sqlite3.connect(db_file)
@@ -22,10 +28,15 @@ def create_connection(db_file):
 
     return None
 
+#split the inputs by the = sign 
+#checks the inputs and changes them 
+#to attribute names 
+#returns the clean input as argument 
 def split():
     argument = []
     i = 2
     for x in sys.argv[2:]:
+	#starts splitting after commandLine.py and search 
         text = sys.argv[i].split("=")
         #case-sensitive in SQL
         if text[0] == 'minPrice':
@@ -48,11 +59,14 @@ def split():
         i+=1
     return argument
 
+#runs searches for everything except category 
+#looks through argument and
+#transforms them into SQL queries
 def search(conn,argument):
     i = 0
     arguments = ""
-    print(argument)
     for x in argument:
+	#for description, it looks for substring
         if(x == 'Description'):
             arguments+= argument[i] + " like \'%" + argument[i+1] + "%\'"
             i+=1
@@ -66,19 +80,21 @@ def search(conn,argument):
             arguments+=str(" AND ")
         i+=1
 
-    print(arguments)
     cur = conn.cursor()
     cur.execute("SELECT * FROM Items WHERE %s" % (arguments,))
 
     rows = cur.fetchall()
 
+    #prints outcome 
     for row in rows:
         print(row)
         if(sys.argv[1] != "search"):
             return row
 
+#runs search for category
+#by joining the items and category tables
 def join(conn,argument):
-    print(len(argument))
+#    print(len(argument))
     arguments = ""
     i = 0
     while i < len(argument):
@@ -103,12 +119,16 @@ def join(conn,argument):
 
     rows = cur.fetchall()
 
+    #prints outcome 
     for row in rows:
         print(row)
         if(sys.argv[1] != "search"):
             return row
 
-
+#defines how to buy an item  
+#takes UserID and ItemID as arguments 
+#runs the sql update query to look for the 
+#item and close the auction 
 def buy(conn,argument):
     i = 0
     userID = []
@@ -130,6 +150,9 @@ def buy(conn,argument):
 
     #place bid that links both Bids and Items table
     status = row[10]
+
+    #if the status of the item is closed 
+    #displays error message 
     if status == 0:
         raise Exception("Bid of Item is Closed!")
     argument.append(userID[0])
@@ -139,12 +162,15 @@ def buy(conn,argument):
     print('Entering bid...')
     bid(conn,argument)
 
+    #runs the sql query to look for item and close auction 
     sql = "UPDATE Items SET Open = false WHERE " + itemID[0] + "=" + itemID[1]
     cur = conn.cursor()
     cur.execute(sql)
     print("Item has been bought!")
 
-
+#defines how to add a bid 
+#takes userID, itemID and price as arguments
+#runs sql insert query 
 def bid(conn,argument):
     date = datetime(2001,12,20,00,00) #default datetime
     date = date.replace(second=1)
@@ -186,7 +212,7 @@ def bid(conn,argument):
     for row in rows:
         print(row)
 
-
+#main program 
 def main():
     database = "auction.db"
 
